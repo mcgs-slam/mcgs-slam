@@ -60,6 +60,46 @@ export CXX=g++-11
 python setup.py install
 ```
 
+### Dev Container (Ampere / CUDA 11.8)
+
+The repository includes a headless VS Code devcontainer that builds the pinned
+Python environment, compiles all CUDA extensions, and caches the Metric3D
+ViT-small model. It targets Linux/x86-64 systems with an NVIDIA RTX 30-series
+GPU (compute capability 8.6).
+
+The host must already have Docker, an NVIDIA driver, and the NVIDIA Container
+Toolkit configured. Verify GPU passthrough before opening the repository in a
+container:
+
+```bash
+docker run --rm --gpus all nvidia/cuda:11.8.0-base-ubuntu22.04 nvidia-smi
+```
+
+The devcontainer binds the example sequence from
+`/home/nicky/datasets/mcgs-example/garden` to `/datasets/garden` read-only.
+Generated results are written to the repository's `output/` directory. After
+using **Dev Containers: Reopen in Container**, setup automatically checks the
+GPU, compiled extensions, and all five synchronized camera streams.
+
+Run the short validation sequence:
+
+```bash
+bash .devcontainer/scripts/run-garden.sh smoke
+```
+
+Run all 217 frames:
+
+```bash
+bash .devcontainer/scripts/run-garden.sh full
+```
+
+The smoke run uses stride 3 and stops after 12 keyframes, writing to
+`output/garden-smoke`. The full run uses stride 1 and writes to `output/garden`.
+Both commands use the calibration-compatible camera order `front_left`,
+`front_center`, `front_right`, `left_center`, `right_center`. Interactive
+`--vis` and `--gsvis` display forwarding are not configured in this headless
+container.
+
 ---
 
 ## 📥 Download the Data

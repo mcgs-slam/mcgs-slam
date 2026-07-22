@@ -1,8 +1,26 @@
 from setuptools import setup
 from torch.utils.cpp_extension import BuildExtension, CUDAExtension
 
+import os
 import os.path as osp
 ROOT = osp.dirname(osp.abspath(__file__))
+
+
+def cuda_arch_flags():
+    """Return explicit NVCC flags, optionally narrowed for container builds."""
+    configured = os.environ.get("MCGS_CUDA_ARCH_LIST")
+    architectures = (
+        configured.replace(",", " ").split()
+        if configured
+        else ["6.0", "6.1", "7.0", "7.5", "8.0", "8.6"]
+    )
+    return [
+        f"-gencode=arch=compute_{arch.replace('.', '')},code=sm_{arch.replace('.', '')}"
+        for arch in architectures
+    ]
+
+
+CUDA_ARCH_FLAGS = cuda_arch_flags()
 
 setup(
     name='droid_backends',
@@ -17,14 +35,7 @@ setup(
             ],
             extra_compile_args={
                 'cxx': ['-O3'],
-                'nvcc': ['-O3',
-                    '-gencode=arch=compute_60,code=sm_60',
-                    '-gencode=arch=compute_61,code=sm_61',
-                    '-gencode=arch=compute_70,code=sm_70',
-                    '-gencode=arch=compute_75,code=sm_75',
-                    '-gencode=arch=compute_80,code=sm_80',
-                    '-gencode=arch=compute_86,code=sm_86',
-                ]
+                'nvcc': ['-O3'] + CUDA_ARCH_FLAGS,
             }),
     ],
     cmdclass={ 'build_ext' : BuildExtension }
@@ -47,14 +58,7 @@ setup(
                 'thirdparty/lietorch/lietorch/src/lietorch_cpu.cpp'],
             extra_compile_args={
                 'cxx': ['-O2'], 
-                'nvcc': ['-O2',
-                    '-gencode=arch=compute_60,code=sm_60', 
-                    '-gencode=arch=compute_61,code=sm_61', 
-                    '-gencode=arch=compute_70,code=sm_70', 
-                    '-gencode=arch=compute_75,code=sm_75',
-                    '-gencode=arch=compute_80,code=sm_80',
-                    '-gencode=arch=compute_86,code=sm_86',                 
-                ]
+                'nvcc': ['-O2'] + CUDA_ARCH_FLAGS,
             }),
     ],
     cmdclass={ 'build_ext' : BuildExtension }

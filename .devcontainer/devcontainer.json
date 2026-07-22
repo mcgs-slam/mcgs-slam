@@ -1,0 +1,37 @@
+{
+  "name": "MCGS-SLAM (CUDA 11.8)",
+  "build": {
+    "dockerfile": "Dockerfile",
+    "context": ".."
+  },
+  "runArgs": [
+    "--gpus=all",
+    "--shm-size=16g"
+  ],
+  "mounts": [
+    "source=/home/nicky/datasets/mcgs-example/garden,target=/datasets/garden,type=bind,readonly"
+  ],
+  "containerEnv": {
+    "MCGS_GARDEN": "/datasets/garden",
+    "MPLBACKEND": "Agg",
+    "NVIDIA_DRIVER_CAPABILITIES": "compute,utility",
+    "PYTHONUNBUFFERED": "1",
+    "TORCH_HOME": "/opt/torch-cache"
+  },
+  "remoteUser": "vscode",
+  "updateRemoteUserUID": true,
+  "postCreateCommand": "bash .devcontainer/scripts/preflight.sh && python .devcontainer/scripts/validate_garden.py",
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "ms-python.python",
+        "ms-python.vscode-pylance",
+        "ms-vscode.cpptools"
+      ],
+      "settings": {
+        "python.defaultInterpreterPath": "/opt/conda/envs/mcgs/bin/python",
+        "python.terminal.activateEnvironment": false
+      }
+    }
+  }
+}

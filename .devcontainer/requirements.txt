@@ -1,0 +1,20 @@
+--find-links https://data.pyg.org/whl/torch-2.1.2+cu118.html
+
+setuptools==69.5.1
+torch-scatter==2.1.2+pt21cu118
+timm==0.9.16
+open3d==0.18.0
+evo==1.30.0
+munch==4.0.0
+plyfile==1.0.3
+sophuspy==1.2.0
+torchmetrics==1.4.0.post0
+pyrender==0.1.45
+imgviz==1.7.5
+rich==13.7.1
+glfw==2.7.0
+PyGLM==2.7.1
+openmim==0.3.9
+mmengine==0.10.4
+mmcv-lite==2.1.0
+git+https://github.com/eriksandstroem/evaluate_3d_reconstruction_lib.git@9b3cc08be5440db9c375cc21e3bd65bb4a337db7
